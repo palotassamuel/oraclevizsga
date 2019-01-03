@@ -1,0 +1,239 @@
+﻿PROMPT Creating user FOOTBALL_MANAGER...
+
+----------------------------------
+-- 1. Create user, add grants   --
+----------------------------------
+declare
+  cursor cur is
+    select 'alter system kill session ''' || sid || ',' || serial# || '''' as command
+      from v$session
+     where username = 'FOOTBALL_MANAGER';
+begin
+  for c in cur loop
+    EXECUTE IMMEDIATE c.command;
+  end loop;
+end;
+/
+
+DECLARE
+  v_count NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO v_count FROM dba_users t WHERE t.username='FOOTBALL_MANAGER';
+  IF v_count = 1 THEN 
+    EXECUTE IMMEDIATE 'DROP USER football_manager CASCADE';
+  END IF;
+END;
+/
+CREATE USER football_manager 
+  IDENTIFIED BY "12345678" 
+  DEFAULT TABLESPACE users
+  QUOTA UNLIMITED ON users
+;
+
+GRANT CREATE TRIGGER to football_manager;
+GRANT CREATE SESSION TO football_manager;
+GRANT CREATE TABLE TO football_manager;
+GRANT CREATE VIEW TO football_manager;
+GRANT CREATE SEQUENCE TO football_manager;
+GRANT CREATE PROCEDURE TO football_manager;
+GRANT CREATE TYPE TO football_manager;
+GRANT CREATE JOB TO dog_manager;
+
+ALTER SESSION SET CURRENT_SCHEMA=football_manager;
+
+PROMPT Done.
+
+----------------------------------
+-- 2. Create tables             --
+----------------------------------
+PROMPT Creating table TEAM...
+
+CREATE TABLE team(
+  team_id       NUMBER          NOT NULL,
+  team_name     VARCHAR2(100)   NOT NULL,
+  city          VARCHAR2(100)   NOT NULL,
+  president_id  NUMBER          NOT NULL,
+  email         VARCHAR2(100),
+  tel           VARCHAR2(100)     
+) TABLESPACE users;
+
+ALTER TABLE team
+  ADD CONSTRAINT team_pk PRIMARY KEY (team_id);
+
+COMMENT ON TABLE team IS 'Bajnokságban szereplő csapatok';
+
+PROMPT Done.
+
+PROMPT Creating table PEOPLE...
+
+CREATE TABLE people(
+  people_id        NUMBER          NOT NULL,
+  first_name       VARCHAR2(40)    NOT NULL,
+  last_name        VARCHAR2(40)    NOT NULL,
+  team_id          NUMBER          NOT NULL,
+  birth_date       DATE,
+  birth_place_city VARCHAR2(100),
+  email            VARCHAR2(100),
+  tel              VARCHAR2(100),
+  team_role        VARCHAR2(100)                   
+) TABLESPACE users;
+
+ALTER TABLE people
+  ADD CONSTRAINT people_pk PRIMARY KEY (people_id);
+  
+ALTER TABLE team
+  ADD CONSTRAINT team_president_fk FOREIGN KEY (president_id) REFERENCES people(people_id);
+  
+ALTER TABLE people
+  ADD CONSTRAINT people_fk FOREIGN KEY (team_id) REFERENCES team(team_id);
+
+COMMENT ON TABLE people IS 'Emberek';
+COMMENT ON COLUMN people.team_role IS 'A csapatban betöltött feladatkör';
+
+PROMPT Done.
+
+PROMPT Creating table PLAYER_STAT...
+
+CREATE TABLE player_stat(
+  stat_id          NUMBER          NOT NULL,
+  player_id        NUMBER          NOT NULL,
+  playing_position VARCHAR2(100)   NOT NULL,
+  played_matches   NUMBER          DEFAULT 0 NOT NULL,
+  goals            NUMBER          DEFAULT 0 NOT NULL,
+  assists          NUMBER          DEFAULT 0 NOT NULL,
+  yellow_cards     NUMBER          DEFAULT 0 NOT NULL,
+  red_cars         NUMBER          DEFAULT 0 NOT NULL,
+  suspension       NUMBER(1)       DEFAULT 0 NOT NULL,
+  injury           NUMBER(1)       DEFAULT 0 NOT NULL       
+) TABLESPACE users;
+
+ALTER TABLE player_stat
+  ADD CONSTRAINT player_stat_pk PRIMARY KEY (stat_id);
+
+ALTER TABLE player_stat
+  ADD CONSTRAINT player_stat_fk FOREIGN KEY (player_id) REFERENCES people(people_id);
+
+COMMENT ON TABLE player_stat IS 'Játékosok statisztikái';
+COMMENT ON COLUMN player_stat.playing_position IS 'A játékos posztja a pályán';
+COMMENT ON COLUMN player_stat.suspension IS 'Eltiltás';
+
+PROMPT Done.
+
+PROMPT Creating table CHAMPIONSHIP...
+
+CREATE TABLE championship(
+  championship_id  NUMBER          NOT NULL,
+  team_id          NUMBER          NOT NULL,
+  played_matches   NUMBER          DEFAULT 0 NOT NULL,
+  won              NUMBER          DEFAULT 0 NOT NULL,
+  drawn            NUMBER          DEFAULT 0 NOT NULL,
+  lost             NUMBER          DEFAULT 0 NOT NULL,
+  points           NUMBER          DEFAULT 0 NOT NULL     
+) TABLESPACE users;
+
+ALTER TABLE championship
+  ADD CONSTRAINT championship_pk PRIMARY KEY (championship_id);
+
+ALTER TABLE championship
+  ADD CONSTRAINT championship_team_fk FOREIGN KEY (team_id) REFERENCES team(team_id);
+
+COMMENT ON TABLE championship IS 'Bajnokság állása';
+
+PROMPT Done.
+
+PROMPT Creating table MATCH...
+
+CREATE OR REPLACE TYPE player_id_list AS TABLE OF NUMBER;
+/
+
+CREATE TABLE match(
+  match_id         NUMBER          NOT NULL,
+  home_team_id     NUMBER          NOT NULL,
+  away_team_id     NUMBER          NOT NULL,
+  home_goals       NUMBER          DEFAULT 0 NOT NULL,
+  away_goals       NUMBER          DEFAULT 0 NOT NULL,
+  goal_scorers     player_id_list,
+  assists          player_id_list,
+  yellow_cards     player_id_list,
+  red_cards        player_id_list,
+  suspended        player_id_list,
+  injured          player_id_list    
+) NESTED TABLE goal_scorers STORE AS goal_scorers_table,
+  NESTED TABLE assists      STORE AS assists_table,
+  NESTED TABLE yellow_cards STORE AS yellow_cards_table,
+  NESTED TABLE red_cards    STORE AS red_cards_table,
+  NESTED TABLE suspended    STORE AS suspended_table,
+  NESTED TABLE injured      STORE AS injured_table,
+  TABLESPACE users;
+
+ALTER TABLE match
+  ADD CONSTRAINT match_pk PRIMARY KEY (match_id);
+  
+ALTER TABLE match
+  ADD CONSTRAINT match_home_team_fk FOREIGN KEY (home_team_id) REFERENCES team(team_id);
+  
+ALTER TABLE match
+  ADD CONSTRAINT match_away_team_fk FOREIGN KEY (away_team_id) REFERENCES team(team_id);
+  
+COMMENT ON TABLE match IS 'Lejátszott mérkőzések';
+
+PROMPT Done.
+
+PROMPT Loading tables...
+
+prompt Loading TEAM...
+
+INSERT INTO team(team_id, team_name, city, president_id, email, tel)
+VALUES (1, 'PVSK', 'Pécs', 5, 'pvsk@email.hu', '060111222');
+INSERT INTO team(team_id, team_name, city, president_id, email, tel)
+VALUES (2, 'Szeged FC', 'Szeged', 10, 'szfc@email.hu', '060111333');
+INSERT INTO team(team_id, team_name, city, president_id, email, tel)
+VALUES (3, 'FTC', 'Budapest', 15, 'ftc@email.hu', '060111111');
+INSERT INTO team(team_id, team_name, city, president_id, email, tel)
+VALUES (4, 'Honvéd', 'Budapest', 20, 'honved@email.hu', '060000222');
+
+prompt Loading PEOPLE...
+
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (1, 'László', 'Tóth', 1, to_date('23-10-1986', 'dd-mm-yyyy'), 'Veszprém', 'laszlo.toth@tot.hu', '0678123456','játékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (2, 'László', 'Nagy', 1, to_date('23-10-1990', 'dd-mm-yyyy'), 'Kaposvár', 'laszlo.nagy@email.hu', '067812355','játékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (3, 'Imre', 'Tóth', 1, to_date('23-10-1985', 'dd-mm-yyyy'), 'Budapest', 'imre.toth@tot.hu', '0678123412','játékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (4, 'László', 'Kis', 1, to_date('23-10-1990', 'dd-mm-yyyy'), 'Budapest', 'laszlo.kis@tot.hu', '0678123444','játékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (5, 'József', 'Miklós', 1, to_date('23-10-1950', 'dd-mm-yyyy'), 'Veszprém', 'jozsef.miklos@email.hu', '067812123','elnök');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (6, 'György', 'Szabó', 2, to_date('23-10-1991', 'dd-mm-yyyy'), 'Pécs', 'gyorgy.szabo@email.hu', '067812111','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (7, 'Csaba', 'Pécsi', 2, to_date('23-10-1988', 'dd-mm-yyyy'), 'Pécs', 'csaba.pécsi@email.hu', '067812000','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (8, 'Gyula', 'Marosi', 2, to_date('23-10-1995', 'dd-mm-yyyy'), 'Pécs', 'gyula.marosi@email.hu', '067812321','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (9, 'Gergely', 'Jónás', 2, to_date('23-10-1988', 'dd-mm-yyyy'), 'Szeged', 'gergely.jónás@email.hu', '067000321','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (10, 'Mihály', 'Vas', 2, to_date('23-10-1969', 'dd-mm-yyyy'), 'Mohács', 'mihaly.vas@email.hu', '067000000','elnök');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (11, 'András', 'Kovács', 3, to_date('23-10-1986', 'dd-mm-yyyy'), 'Pécs', 'andras.kovacs@email.hu', '067888999','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (12, 'Zoltán', 'Balog', 3, to_date('23-10-1996', 'dd-mm-yyyy'), 'Zalaegerszeg', 'zoltan.balog@email.hu', '067888888','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (13, 'Károly', 'Horváth', 3, to_date('23-10-1984', 'dd-mm-yyyy'), 'Pécs', 'karoly.horvath@email.hu', '067999999','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (14, 'András', 'Németh', 3, to_date('23-10-1989', 'dd-mm-yyyy'), 'Baja', 'andras.nemeth@email.hu', '067888777','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (15, 'Tamás', 'Lengyel', 3, to_date('23-10-1956', 'dd-mm-yyyy'), 'Pécs', 'tamas.lengyel@email.hu', '067112233','elnök');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (16, 'Dénes', 'Kistamás', 4, to_date('23-10-1987', 'dd-mm-yyyy'), 'Baja', 'denes.kistamas@email.hu', '067333444','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (17, 'Márton', 'Nagypál', 4, to_date('23-10-1991', 'dd-mm-yyyy'), 'Zalaegerszeg', 'marton.nagypal@email.hu', '067444444','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (18, 'József', 'Kispál', 4, to_date('23-10-1983', 'dd-mm-yyyy'), 'Pécs', 'jozsef.kispal@email.hu', '067555999','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (19, 'Szablocs', 'Kóródi', 4, to_date('23-10-1987', 'dd-mm-yyyy'), 'Debrecen', 'szabolcs.korodi@email.hu', '067555777','jatékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (20, 'Krisztián', 'Molnár', 4, to_date('23-10-1957', 'dd-mm-yyyy'), 'Miskolc', 'krisztian.molnar@email.hu', '067666666','elnök');
+
+prompt Loading PLAYER_STAT...
+

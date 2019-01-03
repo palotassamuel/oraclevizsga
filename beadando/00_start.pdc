@@ -52,7 +52,6 @@ CREATE TABLE team(
   team_id       NUMBER          NOT NULL,
   team_name     VARCHAR2(100)   NOT NULL,
   city          VARCHAR2(100)   NOT NULL,
-  president_id  NUMBER          NOT NULL,
   email         VARCHAR2(100),
   tel           VARCHAR2(100)     
 ) TABLESPACE users;
@@ -80,9 +79,6 @@ CREATE TABLE people(
 
 ALTER TABLE people
   ADD CONSTRAINT people_pk PRIMARY KEY (people_id);
-  
-ALTER TABLE team
-  ADD CONSTRAINT team_president_fk FOREIGN KEY (president_id) REFERENCES people(people_id);
   
 ALTER TABLE people
   ADD CONSTRAINT people_fk FOREIGN KEY (team_id) REFERENCES team(team_id);
@@ -183,57 +179,103 @@ PROMPT Loading tables...
 
 prompt Loading TEAM...
 
-INSERT INTO team(team_id, team_name, city, president_id, email, tel)
-VALUES (1, 'PVSK', 'Pécs', 5, 'pvsk@email.hu', '060111222');
-INSERT INTO team(team_id, team_name, city, president_id, email, tel)
-VALUES (2, 'Szeged FC', 'Szeged', 10, 'szfc@email.hu', '060111333');
-INSERT INTO team(team_id, team_name, city, president_id, email, tel)
-VALUES (3, 'FTC', 'Budapest', 15, 'ftc@email.hu', '060111111');
-INSERT INTO team(team_id, team_name, city, president_id, email, tel)
-VALUES (4, 'Honvéd', 'Budapest', 20, 'honved@email.hu', '060000222');
+INSERT INTO team(team_id, team_name, city, email, tel)
+VALUES (1, 'PVSK', 'Pécs', 'pvsk@email.hu', '060111222');
+INSERT INTO team(team_id, team_name, city, email, tel)
+VALUES (2, 'Szeged FC', 'Szeged', 'szfc@email.hu', '060111333');
+INSERT INTO team(team_id, team_name, city, email, tel)
+VALUES (3, 'FTC', 'Budapest', 'ftc@email.hu', '060111111');
+INSERT INTO team(team_id, team_name, city, email, tel)
+VALUES (4, 'Honvéd', 'Budapest', 'honved@email.hu', '060000222');
 
 prompt Loading PEOPLE...
 
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
 VALUES (1, 'László', 'Tóth', 1, to_date('23-10-1986', 'dd-mm-yyyy'), 'Veszprém', 'laszlo.toth@tot.hu', '0678123456','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (2, 'László', 'Nagy', 1, to_date('23-10-1990', 'dd-mm-yyyy'), 'Kaposvár', 'laszlo.nagy@email.hu', '067812355','játékos');
+VALUES (2, 'Marcell', 'Nagy', 1, to_date('23-10-1990', 'dd-mm-yyyy'), 'Kaposvár', 'laszlo.nagy@email.hu', '067812355','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
 VALUES (3, 'Imre', 'Tóth', 1, to_date('23-10-1985', 'dd-mm-yyyy'), 'Budapest', 'imre.toth@tot.hu', '0678123412','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (4, 'László', 'Kis', 1, to_date('23-10-1990', 'dd-mm-yyyy'), 'Budapest', 'laszlo.kis@tot.hu', '0678123444','játékos');
+VALUES (4, 'Gábor', 'Kis', 1, to_date('23-10-1990', 'dd-mm-yyyy'), 'Budapest', 'laszlo.kis@tot.hu', '0678123444','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (5, 'József', 'Miklós', 1, to_date('23-10-1950', 'dd-mm-yyyy'), 'Veszprém', 'jozsef.miklos@email.hu', '067812123','elnök');
+VALUES (5, 'József', 'Miklós', 1, to_date('23-10-1998', 'dd-mm-yyyy'), 'Veszprém', 'jozsef.miklos@email.hu', '067812123','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (6, 'György', 'Szabó', 2, to_date('23-10-1991', 'dd-mm-yyyy'), 'Pécs', 'gyorgy.szabo@email.hu', '067812111','jatékos');
+VALUES (6, 'György', 'Szabó', 2, to_date('23-10-1991', 'dd-mm-yyyy'), 'Pécs', 'gyorgy.szabo@email.hu', '067812111','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (7, 'Csaba', 'Pécsi', 2, to_date('23-10-1988', 'dd-mm-yyyy'), 'Pécs', 'csaba.pécsi@email.hu', '067812000','jatékos');
+VALUES (7, 'Csaba', 'Pécsi', 2, to_date('23-10-1988', 'dd-mm-yyyy'), 'Pécs', 'csaba.pécsi@email.hu', '067812000','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (8, 'Gyula', 'Marosi', 2, to_date('23-10-1995', 'dd-mm-yyyy'), 'Pécs', 'gyula.marosi@email.hu', '067812321','jatékos');
+VALUES (8, 'Gyula', 'Marosi', 2, to_date('23-10-1995', 'dd-mm-yyyy'), 'Pécs', 'gyula.marosi@email.hu', '067812321','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (9, 'Gergely', 'Jónás', 2, to_date('23-10-1988', 'dd-mm-yyyy'), 'Szeged', 'gergely.jónás@email.hu', '067000321','jatékos');
+VALUES (9, 'Gergely', 'Jónás', 2, to_date('23-10-1988', 'dd-mm-yyyy'), 'Szeged', 'gergely.jónás@email.hu', '067000321','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (10, 'Mihály', 'Vas', 2, to_date('23-10-1969', 'dd-mm-yyyy'), 'Mohács', 'mihaly.vas@email.hu', '067000000','elnök');
+VALUES (10, 'Mihály', 'Vas', 2, to_date('23-10-1979', 'dd-mm-yyyy'), 'Mohács', 'mihaly.vas@email.hu', '067000000','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (11, 'András', 'Kovács', 3, to_date('23-10-1986', 'dd-mm-yyyy'), 'Pécs', 'andras.kovacs@email.hu', '067888999','jatékos');
+VALUES (11, 'András', 'Kovács', 3, to_date('23-10-1986', 'dd-mm-yyyy'), 'Pécs', 'andras.kovacs@email.hu', '067888999','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (12, 'Zoltán', 'Balog', 3, to_date('23-10-1996', 'dd-mm-yyyy'), 'Zalaegerszeg', 'zoltan.balog@email.hu', '067888888','jatékos');
+VALUES (12, 'Zoltán', 'Balog', 3, to_date('23-10-1996', 'dd-mm-yyyy'), 'Zalaegerszeg', 'zoltan.balog@email.hu', '067888888','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (13, 'Károly', 'Horváth', 3, to_date('23-10-1984', 'dd-mm-yyyy'), 'Pécs', 'karoly.horvath@email.hu', '067999999','jatékos');
+VALUES (13, 'Károly', 'Horváth', 3, to_date('23-10-1984', 'dd-mm-yyyy'), 'Pécs', 'karoly.horvath@email.hu', '067999999','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (14, 'András', 'Németh', 3, to_date('23-10-1989', 'dd-mm-yyyy'), 'Baja', 'andras.nemeth@email.hu', '067888777','jatékos');
+VALUES (14, 'András', 'Németh', 3, to_date('23-10-1989', 'dd-mm-yyyy'), 'Baja', 'andras.nemeth@email.hu', '067888777','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (15, 'Tamás', 'Lengyel', 3, to_date('23-10-1956', 'dd-mm-yyyy'), 'Pécs', 'tamas.lengyel@email.hu', '067112233','elnök');
+VALUES (15, 'Tamás', 'Lengyel', 3, to_date('23-10-1989', 'dd-mm-yyyy'), 'Pécs', 'tamas.lengyel@email.hu', '067112233','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (16, 'Dénes', 'Kistamás', 4, to_date('23-10-1987', 'dd-mm-yyyy'), 'Baja', 'denes.kistamas@email.hu', '067333444','jatékos');
+VALUES (16, 'Dénes', 'Kistamás', 4, to_date('23-10-1987', 'dd-mm-yyyy'), 'Baja', 'denes.kistamas@email.hu', '067333444','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (17, 'Márton', 'Nagypál', 4, to_date('23-10-1991', 'dd-mm-yyyy'), 'Zalaegerszeg', 'marton.nagypal@email.hu', '067444444','jatékos');
+VALUES (17, 'Márton', 'Nagypál', 4, to_date('23-10-1991', 'dd-mm-yyyy'), 'Zalaegerszeg', 'marton.nagypal@email.hu', '067444444','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (18, 'József', 'Kispál', 4, to_date('23-10-1983', 'dd-mm-yyyy'), 'Pécs', 'jozsef.kispal@email.hu', '067555999','jatékos');
+VALUES (18, 'József', 'Kispál', 4, to_date('23-10-1983', 'dd-mm-yyyy'), 'Pécs', 'jozsef.kispal@email.hu', '067555999','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (19, 'Szablocs', 'Kóródi', 4, to_date('23-10-1987', 'dd-mm-yyyy'), 'Debrecen', 'szabolcs.korodi@email.hu', '067555777','jatékos');
+VALUES (19, 'Szablocs', 'Kóródi', 4, to_date('23-10-1987', 'dd-mm-yyyy'), 'Debrecen', 'szabolcs.korodi@email.hu', '067555777','játékos');
 INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
-VALUES (20, 'Krisztián', 'Molnár', 4, to_date('23-10-1957', 'dd-mm-yyyy'), 'Miskolc', 'krisztian.molnar@email.hu', '067666666','elnök');
+VALUES (20, 'Krisztián', 'Molnár', 4, to_date('23-10-1999', 'dd-mm-yyyy'), 'Miskolc', 'krisztian.molnar@email.hu', '067666666','játékos');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (21, 'Dobos', 'József', 1, to_date('23-10-1959', 'dd-mm-yyyy'), 'Miskolc', 'dobos.jozsef@email.hu', '06711221122','edző');
+INSERT INTO people(people_id, first_name, last_name, team_id, birth_date, birth_place_city, email, tel, team_role)
+VALUES (22, 'Berta', 'Pál', 1, to_date('23-10-1949', 'dd-mm-yyyy'), 'Miskolc', 'berta.pal@email.hu', '067987987','elnök');
 
 prompt Loading PLAYER_STAT...
 
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(1, 1 ,'kapus');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(2, 2 ,'védő');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(3, 3 ,'középpályás');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(4, 4 ,'csatár');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(5, 5 ,'csatár');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(6, 6 ,'kapus');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(7, 7 ,'védő');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(8, 8 ,'középpályás');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(9, 9 ,'csatár');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(10, 10 ,'csatár');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(11, 11 ,'kapus');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(12, 12 ,'védő');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(13, 13 ,'középpályás');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(14, 14 ,'csatár');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(15, 15 ,'csatár');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(16, 16 ,'kapus');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(17, 17 ,'védő');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(18, 18 ,'középpályás');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(19, 19 ,'csatár');
+INSERT INTO player_stat(stat_id, player_id, playing_position)
+VALUES(20, 20 ,'csatár');
+
+prompt Done.

@@ -50,7 +50,7 @@ PROMPT Creating table TEAM...
 
 CREATE TABLE team(
   team_id       NUMBER          NOT NULL,
-  team_name     VARCHAR2(100)   NOT NULL,
+  team_name     VARCHAR2(100)   NOT NULL UNIQUE,
   city          VARCHAR2(100)   NOT NULL,
   email         VARCHAR2(100),
   tel           VARCHAR2(100)     
@@ -182,11 +182,11 @@ prompt Loading TEAM...
 INSERT INTO team(team_id, team_name, city, email, tel)
 VALUES (1, 'PVSK', 'Pécs', 'pvsk@email.hu', '060111222');
 INSERT INTO team(team_id, team_name, city, email, tel)
-VALUES (2, 'Szeged FC', 'Szeged', 'szfc@email.hu', '060111333');
+VALUES (2, 'SZEGED FC', 'Szeged', 'szfc@email.hu', '060111333');
 INSERT INTO team(team_id, team_name, city, email, tel)
 VALUES (3, 'FTC', 'Budapest', 'ftc@email.hu', '060111111');
 INSERT INTO team(team_id, team_name, city, email, tel)
-VALUES (4, 'Honvéd', 'Budapest', 'honved@email.hu', '060000222');
+VALUES (4, 'HONVÉD', 'Budapest', 'honved@email.hu', '060000222');
 
 prompt Loading PEOPLE...
 
@@ -277,5 +277,16 @@ INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(19, 19 ,'csatár');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(20, 20 ,'csatár');
+
+prompt Loading CHAMPIONSHIP...
+
+INSERT INTO championship(championship_id,team_id)
+VALUES(1,1);
+INSERT INTO championship(championship_id,team_id)
+VALUES(2,2);
+INSERT INTO championship(championship_id,team_id)
+VALUES(3,3);
+INSERT INTO championship(championship_id,team_id)
+VALUES(4,4);
 
 prompt Done.

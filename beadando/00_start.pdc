@@ -74,7 +74,7 @@ CREATE TABLE people(
   birth_place_city VARCHAR2(100),
   email            VARCHAR2(100),
   tel              VARCHAR2(100),
-  team_role        VARCHAR2(100)                   
+  team_role        VARCHAR2(100)   NOT NULL                   
 ) TABLESPACE users;
 
 ALTER TABLE people
@@ -240,7 +240,7 @@ prompt Loading PLAYER_STAT...
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(1, 1 ,'kapus');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
-VALUES(2, 2 ,'védő');
+VALUES(2, 2 ,'hátvéd');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(3, 3 ,'középpályás');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
@@ -250,7 +250,7 @@ VALUES(5, 5 ,'csatár');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(6, 6 ,'kapus');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
-VALUES(7, 7 ,'védő');
+VALUES(7, 7 ,'hátvéd');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(8, 8 ,'középpályás');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
@@ -260,7 +260,7 @@ VALUES(10, 10 ,'csatár');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(11, 11 ,'kapus');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
-VALUES(12, 12 ,'védő');
+VALUES(12, 12 ,'hátvéd');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(13, 13 ,'középpályás');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
@@ -270,7 +270,7 @@ VALUES(15, 15 ,'csatár');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(16, 16 ,'kapus');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
-VALUES(17, 17 ,'védő');
+VALUES(17, 17 ,'hátvéd');
 INSERT INTO player_stat(stat_id, player_id, playing_position)
 VALUES(18, 18 ,'középpályás');
 INSERT INTO player_stat(stat_id, player_id, playing_position)

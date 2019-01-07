@@ -8,13 +8,13 @@
                                        p_team_role        VARCHAR2,
                                        p_playing_position VARCHAR2) IS
   PRAGMA AUTONOMOUS_TRANSACTION;
-  empty_field EXCEPTION;
-  player VARCHAR2(100) := 'JÁTÉKOS';
+  e_empty_field EXCEPTION;
+  l_player VARCHAR2(100) := 'JÁTÉKOS';
 BEGIN
   BEGIN
-    IF (upper(p_team_role) = player AND p_playing_position IS NULL) THEN
+    IF (upper(p_team_role) = l_player AND p_playing_position IS NULL) THEN
       dbms_output.put_line('HIBA: Kérem adja meg a játékos posztját!');
-      RAISE empty_field;
+      RAISE e_empty_field;
     END IF;
     INSERT INTO people
       (people_id,
@@ -36,7 +36,7 @@ BEGIN
        p_email,
        p_tel,
        p_team_role);
-    IF (upper(p_team_role) = player) THEN
+    IF (upper(p_team_role) = l_player) THEN
       INSERT INTO player_stat
         (stat_id, player_id, playing_position)
       VALUES
@@ -47,6 +47,7 @@ BEGIN
   EXCEPTION
     WHEN OTHERS THEN
       dbms_output.put_line('HIBA: Nem megfelelőek a bevitt adatok!');
+      ROLLBACK;
   END;
 END add_people;
 /

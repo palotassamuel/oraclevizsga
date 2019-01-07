@@ -20,6 +20,7 @@ BEGIN
   EXCEPTION
     WHEN OTHERS THEN
       dbms_output.put_line('HIBA: Nem megfelelőek a bevitt adatok!');
+      ROLLBACK;
   END;
 END add_team;
 /

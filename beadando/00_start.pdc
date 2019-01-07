@@ -98,7 +98,7 @@ CREATE TABLE player_stat(
   goals            NUMBER          DEFAULT 0 NOT NULL,
   assists          NUMBER          DEFAULT 0 NOT NULL,
   yellow_cards     NUMBER          DEFAULT 0 NOT NULL,
-  red_cars         NUMBER          DEFAULT 0 NOT NULL,
+  red_cards        NUMBER          DEFAULT 0 NOT NULL,
   suspension       NUMBER(1)       DEFAULT 0 NOT NULL,
   injury           NUMBER(1)       DEFAULT 0 NOT NULL       
 ) TABLESPACE users;
@@ -146,8 +146,8 @@ CREATE TABLE match(
   match_id         NUMBER          NOT NULL,
   home_team_id     NUMBER          NOT NULL,
   away_team_id     NUMBER          NOT NULL,
-  home_goals       NUMBER          DEFAULT 0 NOT NULL,
-  away_goals       NUMBER          DEFAULT 0 NOT NULL,
+  home_goals       NUMBER          NOT NULL,
+  away_goals       NUMBER          NOT NULL,
   goal_scorers     player_id_list,
   assists          player_id_list,
   yellow_cards     player_id_list,

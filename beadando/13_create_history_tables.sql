@@ -32,7 +32,7 @@ CREATE TABLE player_stat_h(
   goals            NUMBER,
   assists          NUMBER,
   yellow_cards     NUMBER,
-  red_cars         NUMBER,
+  red_cards        NUMBER,
   suspension       NUMBER(1),
   injury           NUMBER(1),
   mod_user         VARCHAR2(300),
@@ -41,11 +41,11 @@ CREATE TABLE player_stat_h(
 ) TABLESPACE users;
 
 CREATE TABLE match_h(
-  match_id         NUMBER          NOT NULL,
-  home_team_id     NUMBER          NOT NULL,
-  away_team_id     NUMBER          NOT NULL,
-  home_goals       NUMBER          DEFAULT 0 NOT NULL,
-  away_goals       NUMBER          DEFAULT 0 NOT NULL,
+  match_id         NUMBER,
+  home_team_id     NUMBER,
+  away_team_id     NUMBER,
+  home_goals       NUMBER,
+  away_goals       NUMBER,
   goal_scorers     player_id_list,
   assists          player_id_list,
   yellow_cards     player_id_list,
@@ -62,3 +62,16 @@ CREATE TABLE match_h(
   NESTED TABLE suspended    STORE AS suspended_table_h,
   NESTED TABLE injured      STORE AS injured_table_h,
   TABLESPACE users;
+  
+CREATE TABLE championship_h(
+  championship_id  NUMBER,
+  team_id          NUMBER,
+  played_matches   NUMBER,
+  won              NUMBER,
+  drawn            NUMBER,
+  lost             NUMBER,
+  points           NUMBER,
+  mod_user         VARCHAR2(300),
+  mod_time         TIMESTAMP(6),
+  dml_flag         VARCHAR2(1)    
+) TABLESPACE users;

@@ -1143,7 +1143,10 @@ BEGIN
         SELECT ps.player_id
           INTO l_check_ids
           FROM player_stat ps
-         WHERE ps.player_id = p_goal_scorers(i);
+          JOIN people p
+            ON ps.player_id = p.people_id
+         WHERE ps.player_id = p_goal_scorers(i)
+           AND (p.team_id = p_home_team_id OR p.team_id = p_away_team_id);
       
         UPDATE player_stat ps
            SET ps.goals = ps.goals + 1
@@ -1155,7 +1158,10 @@ BEGIN
         SELECT ps.player_id
           INTO l_check_ids
           FROM player_stat ps
-         WHERE ps.player_id = p_assists(i);
+          JOIN people p
+            ON ps.player_id = p.people_id
+         WHERE ps.player_id = p_assists(i)
+           AND (p.team_id = p_home_team_id OR p.team_id = p_away_team_id);
       
         UPDATE player_stat ps
            SET ps.assists = ps.assists + 1
@@ -1167,7 +1173,10 @@ BEGIN
         SELECT ps.player_id
           INTO l_check_ids
           FROM player_stat ps
-         WHERE ps.player_id = p_yellow_cards(i);
+          JOIN people p
+            ON ps.player_id = p.people_id
+         WHERE ps.player_id = p_yellow_cards(i)
+           AND (p.team_id = p_home_team_id OR p.team_id = p_away_team_id);
       
         UPDATE player_stat ps
            SET ps.yellow_cards = ps.yellow_cards + 1
@@ -1179,7 +1188,10 @@ BEGIN
         SELECT ps.player_id
           INTO l_check_ids
           FROM player_stat ps
-         WHERE ps.player_id = p_red_cards(i);
+          JOIN people p
+            ON ps.player_id = p.people_id
+         WHERE ps.player_id = p_red_cards(i)
+           AND (p.team_id = p_home_team_id OR p.team_id = p_away_team_id);
       
         UPDATE player_stat ps
            SET ps.red_cards = ps.red_cards + 1
@@ -1191,7 +1203,10 @@ BEGIN
         SELECT ps.player_id
           INTO l_check_ids
           FROM player_stat ps
-         WHERE ps.player_id = p_suspended(i);
+          JOIN people p
+            ON ps.player_id = p.people_id
+         WHERE ps.player_id = p_suspended(i)
+           AND (p.team_id = p_home_team_id OR p.team_id = p_away_team_id);
       
         UPDATE player_stat ps
            SET ps.suspension = 1
@@ -1203,7 +1218,10 @@ BEGIN
         SELECT ps.player_id
           INTO l_check_ids
           FROM player_stat ps
-         WHERE ps.player_id = p_injured(i);
+          JOIN people p
+            ON ps.player_id = p.people_id
+         WHERE ps.player_id = p_injured(i)
+           AND (p.team_id = p_home_team_id OR p.team_id = p_away_team_id);
       
         UPDATE player_stat ps
            SET ps.injury = 1
@@ -1219,6 +1237,7 @@ BEGIN
   END;
 END add_new_match;
 /
+
 
 CREATE OR REPLACE PROCEDURE player_stat_injury_suspension(p_player_id  NUMBER,
                                                           p_suspension NUMBER,
